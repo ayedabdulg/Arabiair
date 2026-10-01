@@ -1,0 +1,8 @@
+{
+  "name": "AraboAir Travel Intelligence",
+  "description": "منصة ذكاء السفر الفاخر لمنطقة الخليج العربي مع تحليلات مسارات الطيران وحجوزات موثوقة.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
