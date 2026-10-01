@@ -197,6 +197,7 @@ const AIRPORTS_DATA: Airport[] = [
 ];
 
 export default function App() {
+  const API_BASE = (import.meta as any).env?.VITE_API_URL || '';
   const [language, setLanguage] = useState<'ar' | 'en'>('ar');
   const [activeTab, setActiveTab] = useState<'home' | 'flights' | 'hotels' | 'ai-assistant' | 'price-alerts' | 'my-trips'>('home');
   const [searchModeTab, setSearchModeTab] = useState<'normal' | 'ai'>('normal');
@@ -389,7 +390,7 @@ export default function App() {
     try {
       const checkInStr = formatDateToYYYYMMDD(hotelTabCheckIn);
       const checkOutStr = formatDateToYYYYMMDD(hotelTabCheckOut);
-      const res = await fetch(`/api/travel/hotels?destination=${hotelTabDestKey}&currency=${currentCurrency.code}&checkIn=${checkInStr}&checkOut=${checkOutStr}&rooms=${hotelTabRooms}&guests=${hotelTabAdults + hotelTabChildren}`);
+      const res = await fetch(`${API_BASE}/api/travel/hotels?destination=${hotelTabDestKey}&currency=${currentCurrency.code}&checkIn=${checkInStr}&checkOut=${checkOutStr}&rooms=${hotelTabRooms}&guests=${hotelTabAdults + hotelTabChildren}`);
       const data = await res.json();
       if (data.success) {
         setHotelTabResults(data.hotels || []);
@@ -558,7 +559,7 @@ export default function App() {
         }
       }
 
-      const res = await fetch(`/api/travel/search?origin=${searchOrigin}&destination=${searchDest}&currency=${currentCurrency.code}&sort=${sortPref}&departureDate=${depStr}&returnDate=${tripType === 'one-way' ? '' : retStr}&adults=${adults}&children=${childrenCount}&infants=${infants}&cabinClass=${cabinClass}`);
+      const res = await fetch(`${API_BASE}/api/travel/search?origin=${searchOrigin}&destination=${searchDest}&currency=${currentCurrency.code}&sort=${sortPref}&departureDate=${depStr}&returnDate=${tripType === 'one-way' ? '' : retStr}&adults=${adults}&children=${childrenCount}&infants=${infants}&cabinClass=${cabinClass}`);
       const data = await res.json();
 
       if (currentSeq !== searchSeq + 1) return;
@@ -589,7 +590,7 @@ export default function App() {
     if (!aiSearchPrompt.trim()) return;
     setAiParsing(true);
     try {
-      const res = await fetch('/api/travel/ai-parse', {
+      const res = await fetch(`${API_BASE}/api/travel/ai-parse`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: aiSearchPrompt }),
@@ -676,7 +677,7 @@ export default function App() {
     setLoadingHotels(true);
     setHotelError(null);
     try {
-      const res = await fetch(`/api/travel/hotels?destination=${destinationAirport.cityEn}&currency=${currentCurrency.code}`);
+      const res = await fetch(`${API_BASE}/api/travel/hotels?destination=${destinationAirport.cityEn}&currency=${currentCurrency.code}`);
       const data = await res.json();
       if (data.success) {
         setHotelsList(data.hotels);
@@ -704,7 +705,7 @@ export default function App() {
     if (!textToSend) setChatInput('');
 
     try {
-      const res = await fetch('/api/travel-ai', {
+      const res = await fetch(`${API_BASE}/api/travel-ai`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: text }),
