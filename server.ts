@@ -39,9 +39,15 @@ async function startServer() {
   app.use(express.json());
 
   app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    const origin = req.headers.origin || '*';
+    if (origin === 'https://araboair.com' || origin.endsWith('.araboair.com') || origin.includes('localhost') || origin.includes('run.app') || origin.includes('pages.dev')) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+    } else {
+      res.setHeader('Access-Control-Allow-Origin', 'https://araboair.com');
+    }
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     if (req.method === 'OPTIONS') {
       return res.sendStatus(200);
     }
@@ -382,8 +388,9 @@ Respond helpfully in fluent, professional Arabic.`;
         { id: 'marrakesh-4', city: 'مراكش', cityKey: 'marrakesh', name: 'فندق بالمانا مراكش', neighborhood: 'جيليز', stars: '4 نجوم', rating: '4.4', price: 380, provider: 'Trip.com', img: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&auto=format&fit=crop&q=80' },
       ];
 
-      const filtered = destination && destination !== 'all'
-        ? ALL_HOTELS.filter(h => h.cityKey === destination || h.city === destination)
+      const destParam = String(destination || '').toLowerCase().trim();
+      const filtered = destParam && destParam !== 'all'
+        ? ALL_HOTELS.filter(h => h.cityKey.toLowerCase() === destParam || h.city.toLowerCase() === destParam || destParam.includes(h.cityKey) || h.cityKey.includes(destParam) || destParam.includes(h.city.toLowerCase()))
         : ALL_HOTELS;
 
       const hotels = filtered.map(h => {

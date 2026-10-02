@@ -197,7 +197,7 @@ const AIRPORTS_DATA: Airport[] = [
 ];
 
 export default function App() {
-  const API_BASE = (import.meta as any).env?.VITE_API_URL || '';
+  const API_BASE = (import.meta as any).env?.VITE_API_URL || 'https://araboair-travel-intelligence-755740606332.europe-west2.run.app';
   const [language, setLanguage] = useState<'ar' | 'en'>('ar');
   const [activeTab, setActiveTab] = useState<'home' | 'flights' | 'hotels' | 'ai-assistant' | 'price-alerts' | 'my-trips'>('home');
   const [searchModeTab, setSearchModeTab] = useState<'normal' | 'ai'>('normal');
@@ -1463,16 +1463,24 @@ export default function App() {
                             key={hotel.id}
                             className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-slate-200/80 flex flex-col sm:flex-row gap-4 p-4 items-center"
                           >
-                            <div className="w-full sm:w-40 h-40 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0 relative">
-                              <img
-                                src={hotel.img}
-                                alt={hotel.name}
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  (e.target as HTMLElement).style.display = 'none';
-                                }}
-                              />
-                              <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-md px-2 py-0.5 rounded-full text-xs font-bold text-[#005ab4] shadow-xs">
+                            <div className="w-full sm:w-40 h-40 rounded-xl overflow-hidden bg-slate-200 flex-shrink-0 relative flex items-center justify-center">
+                              {hotel.img ? (
+                                <img
+                                  key={`hotel-img-${hotel.id}`}
+                                  src={hotel.img}
+                                  alt={hotel.name}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    (e.target as HTMLElement).style.display = 'none';
+                                    const ph = (e.target as HTMLElement).nextElementSibling as HTMLElement;
+                                    if (ph) ph.style.display = 'flex';
+                                  }}
+                                />
+                              ) : null}
+                              <div className={`absolute inset-0 bg-slate-200 flex items-center justify-center text-slate-500 text-xs font-semibold p-2 text-center ${hotel.img ? 'hidden' : 'flex'}`}>
+                                صورة الفندق غير متوفرة
+                              </div>
+                              <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-md px-2 py-0.5 rounded-full text-xs font-bold text-[#005ab4] shadow-xs z-10">
                                 ★ {hotel.rating}
                               </div>
                             </div>
@@ -1484,11 +1492,7 @@ export default function App() {
                                   <span className="text-[10px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded">{hotel.stars}</span>
                                 </div>
                                 <h3 className="font-bold text-base text-[#151c27]">{hotel.name}</h3>
-                                <p className="text-xs text-slate-600">غرفة مزدوجة فاخرة • إفطار مجاني مشمول • إلغاء مجاني</p>
-                                <div className="text-[10px] text-[#005ab4] bg-[#f0f3ff] px-2 py-1 rounded-lg flex items-center justify-between mt-1">
-                                  <span>📞 خدمة عملاء وحجز الشريك ({hotel.provider}): support@partner-booking.com</span>
-                                  <span className="font-bold">هاتف: +966 11 200 5000</span>
-                                </div>
+                                <p className="text-xs text-slate-600">غرفة مزدوجة • إفطار مشمول • إلغاء مجاني</p>
                               </div>
 
                               <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
